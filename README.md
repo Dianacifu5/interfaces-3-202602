@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Componentes reutilizables
+
+- ActionButton — src/shared/components/ui/action-button.tsx
+- StatusBadge — src/shared/components/ui/status-badge.tsx
+- AlertBanner — src/shared/components/ui/alert-banner.tsx
+- MetricBentoStat — src/shared/components/ui/metric-bento-stat.tsx
+- CourseCard — src/features/courses/components/course-card.tsx
+- ToastNotification — src/shared/components/ui/toast-notification.tsx
+- StepProgressTracker — src/shared/components/ui/step-progress-tracker.tsx
+- AcademicAppNavbar — src/shared/components/ui/academic-app-navbar.tsx
+- SubmissionConfirmModal — src/shared/components/ui/submission-confirm-modal.tsx
+- SprintAccordionPanel — src/features/projects/components/sprint-accordion-panel.tsx
