@@ -1,6 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CATEGORIES, type Exercise } from '../types';
+import { CATEGORIES, type Category, type Exercise } from '../types';
+
+const CATEGORY_COLORS: Record<Category, string> = {
+    fuerza: '#5454e9',
+    cardio: '#e9683b',
+    movilidad: '#4cb979',
+};
 
 export function ExerciseCard({
     exercise,
@@ -33,7 +39,12 @@ export function ExerciseCard({
                 <h2 className="card-title text-base">{exercise.name}</h2>
                 <p className="text-sm opacity-70">{exercise.muscle}</p>
                 <div className="mt-1 flex items-center gap-2">
-                    <span className="badge badge-secondary badge-sm">
+                    <span
+                        className="badge badge-sm border-0 text-white"
+                        style={{
+                            backgroundColor: CATEGORY_COLORS[exercise.category],
+                        }}
+                    >
                         {category?.label}
                     </span>
                     <span className="text-xs opacity-70">

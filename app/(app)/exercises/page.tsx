@@ -16,12 +16,22 @@ export const metadata: Metadata = { title: 'Ejercicios' };
 
 export default async function ExercisesPage({ searchParams }: PageProps) {
     const params = await searchParams;
+
     const qValue = params.q;
     const categoryValue = params.category;
+    const durationValue = params.duration;
+
     const q = Array.isArray(qValue) ? qValue[0] : qValue;
     const category = Array.isArray(categoryValue)
         ? categoryValue[0]
         : categoryValue;
+    const durationParam = Array.isArray(durationValue)
+        ? durationValue[0]
+        : durationValue;
+    const duration =
+        durationParam === '5' || durationParam === '10'
+            ? Number(durationParam)
+            : undefined;
 
     return (
         <div className="flex flex-col gap-6">
@@ -32,13 +42,17 @@ export default async function ExercisesPage({ searchParams }: PageProps) {
                 </p>
             </header>
 
-            <ExerciseFilters />
+            <ExerciseFilters key={q ?? ''} />
 
             <Suspense
-                key={`${q ?? ''}|${category ?? ''}`}
+                key={`${q ?? ''}|${category ?? ''}|${duration ?? ''}`}
                 fallback={<ExerciseGridSkeleton />}
             >
-                <ExerciseGrid q={q} category={category} />
+                <ExerciseGrid
+                    q={q}
+                    category={category}
+                    duration={duration}
+                />
             </Suspense>
         </div>
     );

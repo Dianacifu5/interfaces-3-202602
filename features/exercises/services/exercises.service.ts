@@ -6,6 +6,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export interface ExerciseFilters {
     q?: string;
     category?: string;
+    duration?: number;
 }
 
 export async function getExercises(
@@ -22,8 +23,10 @@ export async function getExercises(
             exercise.muscle.toLowerCase().includes(q);
         const matchesCategory =
             !filters.category || exercise.category === filters.category;
+        const matchesDuration =
+            !filters.duration || exercise.durationMin <= filters.duration;
 
-        return matchesText && matchesCategory;
+        return matchesText && matchesCategory && matchesDuration;
     });
 }
 

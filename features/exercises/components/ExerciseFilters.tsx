@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { CATEGORIES } from '../types';
 
@@ -11,57 +11,109 @@ export function ExerciseFilters() {
     const [isPending, startTransition] = useTransition();
 
     const category = searchParams.get('category') ?? '';
+    const duration = searchParams.get('duration') ?? '';
     const urlText = searchParams.get('q') ?? '';
     const [text, setText] = useState(urlText);
 
-    // Cambia un parámetro de la URL y conserva los demás
-    const updateParam = (key: string, value: string) => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (value) params.set(key, value);
-        else params.delete(key);
-        startTransition(() => router.replace(`${pathname}?${params.toString()}`));
-    };
+    const updateParam = useCallback(
+        (key: string, value: string) => {
+            const params = new URLSearchParams(searchParams.toString());
 
-    // Espera 300 ms desde la última tecla antes de buscar (debounce)
+            if (value) {
+                params.set(key, value);
+            } else {
+                params.delete(key);
+            }
+
+            const query = params.toString();
+            startTransition(() => {
+                router.push(query ? `${pathname}?${query}` : pathname);
+            });
+        },
+        [pathname, router, searchParams],
+    );
+
     useEffect(() => {
-        if (text === urlText) return;
+        if (text === urlText) {
+            return;
+        }
+
         const timer = setTimeout(() => updateParam('q', text), 300);
         return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [text]);
+    }, [text, urlText, updateParam]);
 
     return (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <label className="input input-bordered flex w-full items-center gap-2 sm:max-w-xs">
-                <span className="sr-only">Buscar ejercicio</span>
-                <input
-                    type="search"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Buscar ejercicio o músculo"
-                    className="grow"
-                />
-                {isPending && <span className="loading loading-spinner loading-xs" />}
-            </label>
+        <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <label className="input input-bordered flex w-full items-center gap-2 sm:max-w-xs">
+                    <span className="sr-only">Buscar ejercicio</span>
+                    <input
+                        type="search"
+                        value={text}
+                        onChange={(event) => setText(event.target.value)}
+                        placeholder="Buscar ejercicio o músculo"
+                        className="grow"
+                    />
+                    {isPending && (
+                        <span className="loading loading-spinner loading-xs" />
+                    )}
+                </label>
 
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar por categoría">
+                <div
+                    className="flex flex-wrap gap-2"
+                    role="group"
+                    aria-label="Filtrar por categoría"
+                >
+                    <button
+                        type="button"
+                        onClick={() => updateParam('category', '')}
+                        className={`btn btn-sm ${category === '' ? 'btn-primary' : 'btn-outline'}`}
+                    >
+                        Todas las categorías
+                    </button>
+
+                    {CATEGORIES.map((item) => (
+                        <button
+                            key={item.value}
+                            type="button"
+                            onClick={() =>
+                                updateParam('category', item.value)
+                            }
+                            className={`btn btn-sm ${category === item.value ? 'btn-primary' : 'btn-outline'}`}
+                        >
+                            {item.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div
+                className="flex flex-wrap items-center gap-2"
+                role="group"
+                aria-label="Filtrar por duración máxima"
+            >
+                <span className="text-sm">Duración máxima:</span>
                 <button
                     type="button"
-                    onClick={() => updateParam('category', '')}
-                    className={`btn btn-sm ${category === '' ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => updateParam('duration', '')}
+                    className={`btn btn-sm ${duration === '' ? 'btn-primary' : 'btn-outline'}`}
                 >
-                    Todos
+                    Cualquiera
                 </button>
-                {CATEGORIES.map((c) => (
-                    <button
-                        key={c.value}
-                        type="button"
-                        onClick={() => updateParam('category', c.value)}
-                        className={`btn btn-sm ${category === c.value ? 'btn-primary' : 'btn-outline'}`}
-                    >
-                        {c.label}
-                    </button>
-                ))}
+                <button
+                    type="button"
+                    onClick={() => updateParam('duration', '5')}
+                    className={`btn btn-sm ${duration === '5' ? 'btn-primary' : 'btn-outline'}`}
+                >
+                    Hasta 5 min
+                </button>
+                <button
+                    type="button"
+                    onClick={() => updateParam('duration', '10')}
+                    className={`btn btn-sm ${duration === '10' ? 'btn-primary' : 'btn-outline'}`}
+                >
+                    Hasta 10 min
+                </button>
             </div>
         </div>
     );
