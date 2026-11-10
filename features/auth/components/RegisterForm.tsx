@@ -22,7 +22,7 @@ export function RegisterForm() {
                 username,
                 email,
                 passwordHash: password,
-                roleId: 1,
+                roleId: 2,
             });
 
             router.push('/login');
