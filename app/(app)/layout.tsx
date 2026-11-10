@@ -8,11 +8,14 @@ import { AuthGuard } from '@/features/auth/components/AuthGuard';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { useSessionStore } from '@/shared/store/session.store';
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const pathname = usePathname();
     const router = useRouter();
 
-    // Restaurar la sesión de localStorage una sola vez al montar el layout
     useEffect(() => {
         useSessionStore.persist.rehydrate();
     }, []);
@@ -25,7 +28,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return (
         <AuthGuard>
             <div className="min-h-screen bg-base-200">
-                <header className="navbar bg-base-100 shadow-sm px-6 justify-between border-b border-base-300">
+                <header className="navbar justify-between border-b border-base-300 bg-base-100 px-6 shadow-sm">
                     <nav className="flex items-center gap-4">
                         <Link
                             href="/dashboard"
@@ -33,10 +36,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                         >
                             Dashboard
                         </Link>
+
+                        <Link
+                            href="/exercises"
+                            className={`btn btn-ghost btn-sm ${pathname.startsWith('/exercises') ? 'btn-active font-bold' : ''}`}
+                        >
+                            Ejercicios
+                        </Link>
                     </nav>
 
                     <div className="flex items-center gap-3">
-                        {/* Campana de notificaciones reactiva de DaisyUI */}
                         <NotificationBell />
 
                         <button
@@ -49,7 +58,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
 
-                <main className="max-w-4xl mx-auto p-6">{children}</main>
+                <main className="mx-auto max-w-4xl p-6">{children}</main>
             </div>
         </AuthGuard>
     );
